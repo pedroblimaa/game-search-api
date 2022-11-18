@@ -4,58 +4,58 @@ from datetime import date
 baseURL = 'https://www.metacritic.com/browse/games/score/metascore/all/pc'
 
 
-def getGameInfoFromRawHtml(html):
+def get_game_info_from_raw_html(html):
     soup = BeautifulSoup(html, 'html.parser')
     results = soup.find(id='main_content')
-    generalInfos = results.find_all('td', class_='clamp-summary-wrap')
+    general_infos = results.find_all('td', class_='clamp-summary-wrap')
     images = results.find_all('td', class_='clamp-image-wrap')
 
     return {
-        'generalInfos': generalInfos,
+        'general_infos': general_infos,
         'images': images
     }
 
 
-def handleGameInfo(info, image, yearRange=None):
+def handle_game_info(info, image, year_range=None):
     title = info.find('h3').get_text()
     score = info.find('div', class_='metascore_w').get_text()
     details = info.find('div', class_='clamp-details')
-    releaseDate = details.find('span', class_='').get_text()
-    releaseYear = releaseDate.split(' ')[-1]
+    release_date = details.find('span', class_='').get_text()
+    release_year = release_date.split(' ')[-1]
     image = image.find('img')['src']
 
-    if isBetweenYearRange(yearRange, releaseYear):
+    if is_between_year_range(year_range, release_year):
         return {
             'title': title,
             'score': score,
             'image': image,
-            'releaseYear': releaseYear
+            'release_year': release_year
         }
 
     return None
 
 
-def isBetweenYearRange(yearRange, releaseYear):
-    if yearRange[0] is None:
+def is_between_year_range(year_range, release_year):
+    if year_range is None or year_range[0] is None:
         return True
 
-    startYear = yearRange[0]
-    endYear = yearRange[1] if yearRange[1] is not None else date.today().year
+    startYear = year_range[0]
+    endYear = year_range[1] if year_range[1] is not None else date.today().year
 
-    return int(startYear) <= int(releaseYear) <= int(endYear)
+    return int(startYear) <= int(release_year) <= int(endYear)
 
 
-def getNextPageUrl(URL):
+def get_next_page_url(URL):
     currentPage = int(URL.split('=')[-1])
     return baseURL + '?page=' + str(currentPage + 1)
 
 
-def removeGamesBeforeStartGame(games, startGame):
-    if startGame is None:
+def remove_games_before_start_game(games, start_game):
+    if start_game is None:
         return games
 
     for index, game in enumerate(games):
-        if game['title'] == startGame:
+        if game['title'] == start_game:
             return games[index + 1:]
 
     return games

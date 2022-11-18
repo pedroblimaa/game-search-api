@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-import controllers.gamesController as gamesController
+import controllers.games_controller as games_controller
 
 app = Flask(__name__)
 
@@ -10,20 +10,19 @@ def hello_world():
 
 
 @app.route("/games")
-def getGames():
-    gameList = gamesController.getAll()
-    return jsonify(gameList)
+def get_games():
+    game_list = games_controller.get_all()
+    return jsonify(game_list)
 
 
 @app.route("/games/yearRange")
-def getGamesByYearRange():
+def get_games_by_year_range():
     args = request.args
-    print(args)
-    startYear = args.get('startYear')
-    endYear = args.get('endYear')
+    start_year = args.get('start_year')
+    end_year = args.get('end_year')
 
-    gameList = gamesController.getGamesByYearRange([startYear, endYear])
-    return jsonify(gameList)
+    game_list = games_controller.get_games_by_year_range([start_year, end_year])
+    return jsonify(game_list)
 
 
 if __name__ == "__main__":
